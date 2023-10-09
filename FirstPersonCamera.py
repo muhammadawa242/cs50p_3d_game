@@ -83,6 +83,15 @@ class FirstPersonCamera(DirectObject.DirectObject):
                              - (x - self.centX) * self.sensX) 
             self.camera.setP(self.camera, self.camera.getP(self.camera) 
                              - (y - self.centY) * self.sensY)
+            self.camera.setR(self.refNode, self.camera.getR(self.camera))
+            
+            if -47 < self.camera.getP() < 20:
+                self.camera.setP(self.camera, self.camera.getP(self.camera) 
+                             - (y - self.centY) * self.sensY)
+            if self.camera.getP() < -47:
+                self.camera.setP(-46)
+            if self.camera.getP() > 20:
+                self.camera.setP(19)
         
         # handle keys: 
         if self.forward == True: 
