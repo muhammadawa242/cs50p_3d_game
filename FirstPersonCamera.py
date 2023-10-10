@@ -119,6 +119,10 @@ class FirstPersonCamera(DirectObject.DirectObject):
             self.camera.setR(self.camera, self.camera.getR(self.camera) 
                              + self.rollSens * dt)
             
+        
+        # Do not change position along z-axis in any case (set its value to some constant)
+        self.camera.setZ(self.refNode, 20)
+        
         self.time = task.time       
         return Task.cont 
 
