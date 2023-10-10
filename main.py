@@ -6,8 +6,10 @@ from panda3d.core import Point3, KeyboardButton, WindowProperties, loadPrcFile
 from screeninfo import get_monitors
 from FirstPersonCamera import FirstPersonCamera
 
-loadPrcFile('config.prc')   # see gloabal config variables page, also ConfigVariableManager.getGlobalPtr().listVariables()
+# loadPrcFile('config.prc')   # see gloabal config variables page, also ConfigVariableManager.getGlobalPtr().listVariables()
 WIDTH, HEIGHT = get_monitors()[0].width, get_monitors()[0].height
+
+CAMERA_POS_Z = 20
 
 # set fullscreen
 properties = WindowProperties()
@@ -22,7 +24,9 @@ class Game(ShowBase):
         self.env.setPos(0,50,-10)
         self.env.reparentTo(self.render)
         
-        self.mouseLook = FirstPersonCamera(self, self.cam, self.render)
+        self.camera.setPos(0,0,CAMERA_POS_Z)
+        
+        self.mouseLook = FirstPersonCamera(self, self.cam, CAMERA_POS_Z, self.render)
         self.mouseLook.start()
         
         

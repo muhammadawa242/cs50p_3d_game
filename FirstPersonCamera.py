@@ -23,7 +23,7 @@ class FirstPersonCamera(DirectObject.DirectObject):
     # applies, that should be ShowBase derived.
     # @param camera: the camera to which this controller applies
     # @param refNode: reference node wrt heading and up/down are performed
-    def __init__(self, gameApp, camera, refNode=None,
+    def __init__(self, gameApp, camera, camera_pos_z, refNode=None,
                  collisionHandler=None):
         '''
         Constructor
@@ -31,6 +31,7 @@ class FirstPersonCamera(DirectObject.DirectObject):
         
         self.gameApp = gameApp
         self.camera = camera
+        self.camera_pos_z = camera_pos_z
         if refNode != None:
             self.refNode = refNode
         else:
@@ -121,7 +122,7 @@ class FirstPersonCamera(DirectObject.DirectObject):
             
         
         # Do not change position along z-axis in any case (set its value to some constant)
-        self.camera.setZ(self.refNode, 20)
+        self.camera.setZ(self.refNode, self.camera_pos_z)
         
         self.time = task.time       
         return Task.cont 
