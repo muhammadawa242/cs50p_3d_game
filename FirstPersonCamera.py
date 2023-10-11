@@ -64,7 +64,7 @@ class FirstPersonCamera(DirectObject.DirectObject):
         self.collideMask = BitMask32(0x10)
 
         #press enter to get this camera controller
-        self.accept("enter", self.toggle)           
+        # self.accept("enter", self.toggle)           
 
     ## Get camera collide mask
     def getCollideMask(self):
