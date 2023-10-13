@@ -7,7 +7,7 @@ from panda3d.core import Point3, KeyboardButton, WindowProperties, loadPrcFile, 
 class Zombie(DirectObject.DirectObject):
     def __init__(self, game):
         self.game = game
-        self.zombie = Actor('../console_game/blender_files/zombie2.glb')
+        self.zombie = Actor('assets/zombie2.glb')
         self.zombie.reparentTo(game.render)
         
         print(self.zombie.getAnimNames())
