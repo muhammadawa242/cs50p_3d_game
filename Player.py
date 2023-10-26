@@ -43,7 +43,7 @@ class Player(DirectObject.DirectObject):
                 rayHit_np = rayHit.getIntoNodePath()
                 name = rayHit_np.getName()
                 self.game.cTrav.removeCollider(rayHit_np)
-                # rayHit_np.removeNode()
+                rayHit_np.detachNode()
                 # hitPos = rayHit.getSurfacePoint(render)
                 
                 # get the zombie/entry(0) to stop walking and animate death here
