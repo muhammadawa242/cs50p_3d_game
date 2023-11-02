@@ -3,16 +3,14 @@ from panda3d.core import *
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task 
 
-##   First person camera controller, "free view"/"FPS" style.
-#    
-#    Simple camera mouse look and WASD key controller 
-#    shift to go faster,
-#    r and f keys move camera up/down, 
-#    q and e keys rotate camera,
-#    hit enter to start/stop controls.
-#    If a refNode is specified, heading and up/down are performed wrt the 
-#    reference node (usually the root node of scene, i.e. base.render)
-#    and camera behaves more similarly to an "FPS" camera.
+'''
+This class is not my own work and is downloaded from the internet to be used with slight modifications
+in the original code.
+
+Original Author: https://discourse.panda3d.org/u/consultit
+
+'''
+
 class FirstPersonCamera(DirectObject.DirectObject):
     '''
     First person camera controller.
@@ -174,7 +172,6 @@ class FirstPersonCamera(DirectObject.DirectObject):
             self.collisionNP = self.camera.attachNewNode(CollisionNode("firstPersonCamera"))
             # Attach a collision sphere solid to the collision node.
             self.collisionNP.node().addSolid(CollisionSphere(0, 0, 0, nearDist * 1.1))
-#            self.collisionNP.show()
             # setup camera "from" bit-mask
             self.collisionNP.node().setFromCollideMask(self.collideMask)
             # add to collisionHandler (Pusher)
