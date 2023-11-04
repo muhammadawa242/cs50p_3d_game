@@ -25,12 +25,12 @@ class Game(ShowBase):
         super(Game, ShowBase.__init__(self))
         self.win.requestProperties(properties)
         
-        self.mouseLook = FirstPersonCamera(self, self.cam, CAMERA_POS_Z, self.render)
-        self.mouseLook.start()
-        
         self.cTrav = CollisionTraverser()
         self.pusher = CollisionHandlerPusher()
         self.rayqueue = CollisionHandlerQueue()
+        
+        self.mouseLook = FirstPersonCamera(self, self.cam, CAMERA_POS_Z, self.render, self.pusher)
+        self.mouseLook.start()
         
         self.ray_node = CollisionNode('ray')
         self.ray = CollisionRay()

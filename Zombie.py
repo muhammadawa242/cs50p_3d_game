@@ -25,6 +25,10 @@ class Zombie(DirectObject.DirectObject):
     
     def zombie_walk(self, task):
         if not self.die:
+            # Don't allow zombie move along vertical plane on collisions
+            self.zombie.setZ(0)
+            
+            # 2D plane movement
             if self.zombie.getX() - self.game.cam.getX() > 0:
                 self.zombie.setX(self.zombie.getX() - 1)
             elif self.zombie.getX() - self.game.cam.getX() < 0:
@@ -41,14 +45,7 @@ class Zombie(DirectObject.DirectObject):
             
             self.zombie.setP(0)
             self.zombie.setR(0)
-            
-            # if (self.zombie.getCurrentFrame('walk') == 0 or self.zombie.getCurrentFrame('walk') >= 36) and self.walking == False:
-            #     self.zombie.play('walk', fromFrame=24, toFrame=30)
-            #     self.walking = True
-                
-            # if self.zombie.getCurrentFrame('walk') >= 30 and self.walking == True:
-            #     self.zombie.play('walk', fromFrame=31, toFrame=36)
-            #     self.walking = False
+
         else:
             if self.once:
                 self.zombie.play('dieheadshot2')
