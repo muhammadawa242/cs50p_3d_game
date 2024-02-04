@@ -19,7 +19,7 @@ origin = Vec3(0, 0, 0)
 
 class Walker(NodePath):
 
-    def __init__(self, heightFunction, x=0, y=0):
+    def __init__(self, actor, actor_scale, heightFunction, x=0, y=0):
 
         NodePath.__init__(self, "Creature")
         self.reparentTo(render)
@@ -35,10 +35,8 @@ class Walker(NodePath):
         self.turbo = 1
         self.maxStoppingDistance = self.maxSpeed / self.acceleration * 0.5
 
-        self.body = Actor("models/ralph",
-                          {"run":"models/ralph-run",
-                          "walk":"models/ralph-walk"})
-        self.body.setScale(0.25)
+        self.body = actor
+        self.body.setScale(actor_scale)
         self.body.reparentTo(self)
         self.heightFunction = heightFunction
 
@@ -113,8 +111,8 @@ class Walker(NodePath):
         return 2 * self.acceleration * distance
 
 class Player(Walker):
-    def __init__(self, heightFunction, x=0, y=0):
-        Walker.__init__(self, heightFunction, x, y)
+    def __init__(self, actor, actor_scale, heightFunction, x=0, y=0):
+        Walker.__init__(self, actor, actor_scale, heightFunction, x, y)
         self.controls = {"left":0, "right":0, "forward":0, "back":0, "turbo":0}
 
     def update(self, elapsed):
