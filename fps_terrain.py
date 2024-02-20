@@ -35,15 +35,3 @@ class FpsCamera(TerrainCamera):
         
         # set the camera at player's head position level
         self.camNode.setZ(self.player, 3.5)
-        
-        self.fixHeight()
-
-
-    def fixHeight(self):
-        pos = self.camNode.getPos(render)
-        minZ = self.terrain.getElevation(pos.x, pos.y) + 1.2
-        
-        if pos.z < minZ:
-            pos.z = minZ
-            
-        self.camNode.setPos(render, pos)
