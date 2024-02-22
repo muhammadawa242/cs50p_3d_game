@@ -16,10 +16,10 @@ class FpsCamera(TerrainCamera):
         
         # otherwise the camera and model are opposite to each other
         # Also this means pitch is now inverted. -x is now x
-        self.camNode.setHpr(self.player, 180,0,0)
+        self.camNode.setHpr(self.player, 180,3,5)
         
         # set the camera at player's head position level
-        self.camNode.setZ(1.5)
+        self.camNode.setPos(0.01,0.15,1.59)
         
         self.maxPitch = 50
         self.minPitch = -50

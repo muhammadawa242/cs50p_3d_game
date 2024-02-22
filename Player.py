@@ -11,7 +11,7 @@ class Player(DirectObject.DirectObject):
         self.game = game
         self.gun = Actor('assets/pistol_bang.glb')
         self.gun.setScale(2.25)
-        # self.game.taskMgr.add(self.gun_stuff,'gun_stuff')
+        self.game.taskMgr.add(self.gun_stuff,'gun_stuff')
         self.game.taskMgr.add(self.set_player_height,'set_player_height')
         
         self.gun.reparentTo(render)
@@ -23,8 +23,8 @@ class Player(DirectObject.DirectObject):
     def gun_stuff(self,task):
         self.game.ray.setFromLens(self.game.camNode,0,0)
         
-        self.gun.setHpr(self.game.cam, 188,-3,-1)
-        self.gun.setPos(self.game.cam,2.5,10,-47.5)#2-50)
+        # self.gun.setHpr(self.game.cam, 188,-3,-1)
+        # self.gun.setPos(self.game.cam,2.5,10,-47.5)#2-50)
 
         r = KeyboardButton.ascii_key('r')
         l = MouseButton.button(0)
