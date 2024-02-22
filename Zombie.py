@@ -10,6 +10,7 @@ class Zombie(DirectObject.DirectObject):
     def __init__(self, game, x_pos, flinch):
         self.game = game
         self.zombie = Actor('assets/zombie2.glb')
+        self.zombie.setScale(0.05)
         self.zombie.loop(flinch)
         self.zombie.reparentTo(game.render)
         self.zombie.setPos(x_pos*90,50,0)
@@ -17,6 +18,7 @@ class Zombie(DirectObject.DirectObject):
         self.die = False
         self.once = True
         self.game.taskMgr.add(self.zombie_walk, 'zombie_walk')
+        self.game.taskMgr.add(self.set_zombie_height,'set_zombie_height')
         
         # print(self.zombie.getAnimNames())
         
@@ -26,18 +28,18 @@ class Zombie(DirectObject.DirectObject):
     def zombie_walk(self, task):
         if not self.die:
             # Don't allow zombie move along vertical plane on collisions
-            self.zombie.setZ(0)
+            # self.zombie.setZ(0)
             
             # 2D plane movement
             if self.zombie.getX() - self.game.cam.getX() > 0:
-                self.zombie.setX(self.zombie.getX() - 1)
+                self.zombie.setX(self.zombie.getX() - .01)
             elif self.zombie.getX() - self.game.cam.getX() < 0:
-                self.zombie.setX(self.zombie.getX() + 1)
+                self.zombie.setX(self.zombie.getX() + .01)
                 
             if self.zombie.getY() - self.game.cam.getY() > 0:
-                self.zombie.setY(self.zombie.getY() - 1)
+                self.zombie.setY(self.zombie.getY() - .01)
             elif self.zombie.getY() - self.game.cam.getY() < 0:
-                self.zombie.setY(self.zombie.getY() + 1)
+                self.zombie.setY(self.zombie.getY() + .01)
             
             # direct zombie's front towards the camera constantly
             if self.game.cam.getX() != 0:
@@ -51,4 +53,8 @@ class Zombie(DirectObject.DirectObject):
                 self.zombie.play('dieheadshot2')
                 self.once = False
             
+        return task.cont
+    
+    def set_zombie_height(self, task):
+        self.zombie.setZ(self.game.terrain.getElevation(self.zombie.getX(),self.zombie.getY()))
         return task.cont
