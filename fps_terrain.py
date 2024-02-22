@@ -14,6 +14,13 @@ class FpsCamera(TerrainCamera):
         # make camera a child of player node
         self.camNode.reparentTo(player)
         
+        # otherwise the camera and model are opposite to each other
+        # Also this means pitch is now inverted. -x is now x
+        self.camNode.setHpr(self.player, 180,0,0)
+        
+        # set the camera at player's head position level
+        self.camNode.setZ(1.5)
+        
         self.maxPitch = 50
         self.minPitch = -50
         
@@ -30,8 +37,3 @@ class FpsCamera(TerrainCamera):
         if (self.playerPitch > self.maxPitch): 
             self.playerPitch = self.maxPitch
         self.player.setP(self.playerPitch)
-        
-        self.camNode.setHpr(self.player, 180,0,0)
-        
-        # set the camera at player's head position level
-        self.camNode.setZ(self.player, 3.5)

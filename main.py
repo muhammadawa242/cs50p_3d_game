@@ -2,14 +2,15 @@ from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
-from panda3d.core import Point3, KeyboardButton, WindowProperties, loadPrcFile, MouseButton
+from panda3d.core import Point3, KeyboardButton, WindowProperties, loadPrcFile, MouseButton, Vec3
 from screeninfo import get_monitors
 from fps_terrain import FpsCamera
-# from Player import Player
+from Player import Player
 # from Terrain import Terrain
 from Zombie import Zombie
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode, CollisionRay, CollisionHandlerQueue
 from panda3d.core import TextureStage, TexGenAttrib, Texture, LoaderOptions, TexturePool, Fog
+from panda3d.bullet import BulletBoxShape, BulletWorld, BulletRigidBodyNode
 from direct.showbase.Loader import Loader
 import random
 import sys
@@ -17,7 +18,7 @@ import sys
 sys.path.insert(1, 'Panda_3d_Procedural_Terrain_Engine/src')
 from config import *
 from Panda_3d_Procedural_Terrain_Engine.src.sky import Sky
-from Panda_3d_Procedural_Terrain_Engine.src.creature import Player,Ai
+# from Panda_3d_Procedural_Terrain_Engine.src.creature import Player,Ai
 from Panda_3d_Procedural_Terrain_Engine.src.physics import TerrainPhysics
 from Panda_3d_Procedural_Terrain_Engine.src.basicfunctions import getMouseLook
 
@@ -40,6 +41,24 @@ class Game(ShowBase):
         self.sky.start()
         self.sky.paused= True
         
+        # bullet world for physics
+        self.world = BulletWorld()
+        self.world.setGravity(Vec3(0, 0, -9.81))
+        
+        shape = BulletBoxShape(Vec3(0.5, 0.5, 0.5))
+        node = BulletRigidBodyNode('Box')
+        node.setMass(1.0)
+        node.addShape(shape)
+
+        self.np = self.render.attachNewNode(node)
+        self.np.setPos(0, 0, 200)
+        
+        self.world.attachRigidBody(node)
+        
+        self.taskMgr.add(self.update, 'update')
+        
+        l = self.loader.loadModel('models/box')
+        l.reparentTo(self.np)
         
         # populate terrain with trees and stuff
         populator = TerrainPopulator()
@@ -97,27 +116,28 @@ class Game(ShowBase):
     def _loadPlayer(self):
         # Create the main character
         # actor = Actor('assets/pistol_shaded_test.glb')
-        actor = Actor('assets/pistol_bang.glb')
-        actor_scale = 2.25
-        actor.play('Idle')
+        # actor = Actor('assets/pistol_bang.glb')
+        # actor_scale = 2.25
+        # actor.play('Idle')
         
-        self.player = Player(actor, actor_scale, self.terrain.getElevation, 0, 0)
+        self.player = Player(self).gun
         self.focus = self.player
         self.terrain.setFocus(self.focus)
         # Accept the control keys for movement
                 
         self.camera = FpsCamera(self.player, self.terrain)
+        # self.player.reparentTo(render)
         # self.mouseLook = FirstPersonCamera(self, self.cam, CAMERA_POS_Z, self.render, None)
         # self.mouseLook.start()
         
         
         self.mouseInvertY = False
         self.accept("escape", sys.exit)
-        self.accept("w", self.player.setControl, ["forward", 1])
-        self.accept("a", self.player.setControl, ["left", 1])
-        self.accept("s", self.player.setControl, ["back", 1])
-        self.accept("d", self.player.setControl, ["right", 1])
-        self.accept("shift", self.player.setControl, ["turbo", 1])
+        # self.accept("w", self.player.setControl, ["forward", 1])
+        # self.accept("a", self.player.setControl, ["left", 1])
+        # self.accept("s", self.player.setControl, ["back", 1])
+        # self.accept("d", self.player.setControl, ["right", 1])
+        # self.accept("shift", self.player.setControl, ["turbo", 1])
         self.accept("1", self.sky.setTime, [300.0])
         self.accept("2", self.sky.setTime, [600.0])
         self.accept("3", self.sky.setTime, [900.0])
@@ -126,12 +146,12 @@ class Game(ShowBase):
         self.accept("6", self.sky.setTime, [1800.0])
         self.accept("7", self.sky.setTime, [2100.0])
         self.accept("8", self.sky.setTime, [0.0])
-        self.accept("n", self.sky.toggleNightSkip)
-        self.accept("w-up", self.player.setControl, ["forward", 0])
-        self.accept("a-up", self.player.setControl, ["left", 0])
-        self.accept("s-up", self.player.setControl, ["back", 0])
-        self.accept("d-up", self.player.setControl, ["right", 0])
-        self.accept("shift-up", self.player.setControl, ["turbo", 0])
+        # self.accept("n", self.sky.toggleNightSkip)
+        # self.accept("w-up", self.player.setControl, ["forward", 0])
+        # self.accept("a-up", self.player.setControl, ["left", 0])
+        # self.accept("s-up", self.player.setControl, ["back", 0])
+        # self.accept("d-up", self.player.setControl, ["right", 0])
+        # self.accept("shift-up", self.player.setControl, ["turbo", 0])
         
     
     def move(self, task):
@@ -151,7 +171,7 @@ class Game(ShowBase):
         if base.win.movePointer(0, 200, 200):
             self.camera.update(deltaX, deltaY)
             
-        self.player.update(elapsed)
+        # self.player.update(elapsed)
 
         self.terrain.setShaderInput("camPos", base.cam.getPos(self.render))
         self.terrain.setShaderInput("fogColor", self.sky.fog.getColor())
@@ -161,6 +181,19 @@ class Game(ShowBase):
         # Store the task time and continue.
         self.prevtime = task.time
         return Task.cont
+    
+    def update(self, task):
+        dt = globalClock.getDt()
         
+        x = self.terrain.getElevation(0,0)
+        
+        if self.np.getZ() <= x:
+            self.np.setZ(x)
+        else:
+            self.world.doPhysics(dt)
+        
+        
+        return task.cont
+    
 game = Game()
 game.run()

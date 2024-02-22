@@ -10,10 +10,11 @@ class Player(DirectObject.DirectObject):
     def __init__(self, game):
         self.game = game
         self.gun = Actor('assets/pistol_bang.glb')
-        self.gun.setScale(30)
-        self.game.taskMgr.add(self.gun_stuff,'gun_stuff')
+        self.gun.setScale(2.25)
+        # self.game.taskMgr.add(self.gun_stuff,'gun_stuff')
+        self.game.taskMgr.add(self.set_player_height,'set_player_height')
         
-        self.gun.reparentTo(self.game.render)
+        self.gun.reparentTo(render)
         self.gun.loop('Idle')
         self.imageObject = OnscreenImage(image='assets/cross.png', pos=(0, 0, 0))
         self.imageObject.setTransparency(TransparencyAttrib.MAlpha)
@@ -51,4 +52,8 @@ class Player(DirectObject.DirectObject):
                     hitObject = rayHit_np.getPythonTag(name)
                     hitObject.die = True
         
+        return task.cont
+    
+    def set_player_height(self, task):
+        self.gun.setZ(self.game.terrain.getElevation(self.gun.getX(),self.gun.getY()))
         return task.cont
