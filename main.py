@@ -96,21 +96,21 @@ class Game(ShowBase):
         self.cTrav.addCollider(self.ray_np, self.rayqueue)
         self.ray_np.show()
         
-        flinches = ['laflinch', 'rlflinch', 'llflinch', 'raflinch', 'flinchsmall', 'bigflinch']
-        for i in range(6):
-            z = Zombie(self, i, random.choice(flinches))
-            name = 'zombie'+str(i)
-            colliderNode = CollisionNode(name)
-            self.zombie = z.get_zombie()
+        # flinches = ['laflinch', 'rlflinch', 'llflinch', 'raflinch', 'flinchsmall', 'bigflinch']
+        # for i in range(6):
+        #     z = Zombie(self, i, random.choice(flinches))
+        #     name = 'zombie'+str(i)
+        #     colliderNode = CollisionNode(name)
+        #     self.zombie = z.get_zombie()
             
-            colliderNode.addSolid(CollisionSphere(0, 0, 40, 30))
-            colliderNode.setFromCollideMask(0x10)
-            collider = self.zombie.attachNewNode(colliderNode)
-            collider.setCollideMask(0x10)
-            collider.setPythonTag(name, z)
-            self.cTrav.addCollider(collider, self.pusher)
-            self.pusher.addCollider(collider, self.zombie)
-            # collider.show()
+        #     colliderNode.addSolid(CollisionSphere(0, 0, 40, 30))
+        #     colliderNode.setFromCollideMask(0x10)
+        #     collider = self.zombie.attachNewNode(colliderNode)
+        #     collider.setCollideMask(0x10)
+        #     collider.setPythonTag(name, z)
+        #     self.cTrav.addCollider(collider, self.pusher)
+        #     self.pusher.addCollider(collider, self.zombie)
+        #     # collider.show()
         
 
     def _loadPlayer(self):
