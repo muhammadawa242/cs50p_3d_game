@@ -24,12 +24,11 @@ class Player(DirectObject.DirectObject):
         # bullet world settings
         shape = BulletCapsuleShape(radius=1, height=3.6) # 2.25 + 1.59(cam height) + {cam own length} = total height
         self.node = BulletCharacterControllerNode(shape, 1, 'capsule_player')
-        # node.setMass(7.0)
-        # node.addShape(shape)
         self.np = render.attachNewNode(self.node)
         self.np.setPos(0,0,200)
         self.gun.reparentTo(self.np)
         self.game.world.attach(self.node)
+        self.is_on_ground = False
         
     def gun_stuff(self,task):
         self.game.ray.setFromLens(self.game.camNode,0,0)
@@ -72,7 +71,6 @@ class Player(DirectObject.DirectObject):
         s = KeyboardButton.ascii_key('s')
         a = KeyboardButton.ascii_key('a')
         d = KeyboardButton.ascii_key('d')
-        c = KeyboardButton.ascii_key('c')
         
         is_down = self.game.mouseWatcherNode.is_button_down
         
@@ -84,15 +82,16 @@ class Player(DirectObject.DirectObject):
         if is_down(a): speed.setX( speed_sens)
         if is_down(d): speed.setX(-speed_sens)
         
-        self.node.setLinearMovement(speed, True)
-        
         # jumping
-        if is_down(c):
-            self.node.setMaxJumpHeight(5.0)
-            self.node.setJumpSpeed(8.0)
-        
-            self.node.doJump()
+        if base.mouseWatcherNode.isButtonDown("space") and self.is_on_ground:
+            speed.setZ(speed_sens*20)
+            self.is_on_ground = False
+        elif not self.is_on_ground:
+            # bring player down
+            speed.setZ(-speed_sens*10)
+            
 
+        self.node.setLinearMovement(speed, True)
         # angular movement
         # implemented in fps_terrain. coupling caution!
         
@@ -105,4 +104,5 @@ class Player(DirectObject.DirectObject):
         
         if self.np.getZ() <= xy_pos:
             self.np.setZ(xy_pos)
+            self.is_on_ground = True
         return task.cont
