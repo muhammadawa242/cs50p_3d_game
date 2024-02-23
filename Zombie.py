@@ -17,6 +17,7 @@ class Zombie(DirectObject.DirectObject):
         self.walking = False
         self.die = False
         self.once = True
+        self.displace = .2
         self.game.taskMgr.add(self.zombie_walk, 'zombie_walk')
         self.game.taskMgr.add(self.set_zombie_height,'set_zombie_height')
         
@@ -32,14 +33,14 @@ class Zombie(DirectObject.DirectObject):
             
             # 2D plane movement
             if self.zombie.getX() - self.game.cam.getX() > 0:
-                self.zombie.setX(self.zombie.getX() - .01)
+                self.zombie.setX(self.zombie.getX() - self.displace)
             elif self.zombie.getX() - self.game.cam.getX() < 0:
-                self.zombie.setX(self.zombie.getX() + .01)
+                self.zombie.setX(self.zombie.getX() + self.displace)
                 
             if self.zombie.getY() - self.game.cam.getY() > 0:
-                self.zombie.setY(self.zombie.getY() - .01)
+                self.zombie.setY(self.zombie.getY() - self.displace)
             elif self.zombie.getY() - self.game.cam.getY() < 0:
-                self.zombie.setY(self.zombie.getY() + .01)
+                self.zombie.setY(self.zombie.getY() + self.displace)
             
             # direct zombie's front towards the camera constantly
             if self.game.cam.getX() != 0:
