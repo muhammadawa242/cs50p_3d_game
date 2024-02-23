@@ -35,6 +35,17 @@ class Game(ShowBase):
         from Panda_3d_Procedural_Terrain_Engine.src.terrain import Terrain, TerrainPopulator
         from Panda_3d_Procedural_Terrain_Engine.src.populator import makeTree
         
+        # debug bullet code
+        from panda3d.bullet import BulletDebugNode
+        debugNode = BulletDebugNode('Debug')
+        debugNode.showWireframe(True)
+        debugNode.showConstraints(True)
+        debugNode.showBoundingBoxes(False)
+        debugNode.showNormals(False)
+        debugNP = render.attachNewNode(debugNode)
+        debugNP.show()
+        
+        
         # Sky configuration
         self.sky = Sky(None)
         self.sky.setTime(1700.0)
@@ -44,21 +55,9 @@ class Game(ShowBase):
         # bullet world for physics
         self.world = BulletWorld()
         self.world.setGravity(Vec3(0, 0, -9.81))
-        
-        shape = BulletBoxShape(Vec3(0.5, 0.5, 0.5))
-        node = BulletRigidBodyNode('Box')
-        node.setMass(1.0)
-        node.addShape(shape)
-
-        self.np = self.render.attachNewNode(node)
-        self.np.setPos(0, 0, 200)
-        
-        self.world.attachRigidBody(node)
+        # self.world.setDebugNode(debugNP.node()) #debug bullet code 2
         
         self.taskMgr.add(self.update, 'update')
-        
-        l = self.loader.loadModel('models/box')
-        l.reparentTo(self.np)
         
         # populate terrain with trees and stuff
         populator = TerrainPopulator()
@@ -185,13 +184,7 @@ class Game(ShowBase):
     def update(self, task):
         dt = globalClock.getDt()
         
-        x = self.terrain.getElevation(0,0)
-        
-        if self.np.getZ() <= x:
-            self.np.setZ(x)
-        else:
-            self.world.doPhysics(dt)
-        
+        self.world.doPhysics(dt)
         
         return task.cont
     
