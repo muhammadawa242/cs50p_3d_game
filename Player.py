@@ -86,8 +86,8 @@ class Player(DirectObject.DirectObject):
         
         # jumping
         if base.mouseWatcherNode.isButtonDown("space"):
-            self.node.setMaxJumpHeight(8.0)
-            self.node.setJumpSpeed(30.0)
+            self.node.setMaxJumpHeight(3.0)
+            self.node.setJumpSpeed(20.0)
             self.node.doJump()
             
 
