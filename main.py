@@ -6,6 +6,7 @@ from panda3d.core import Point3, KeyboardButton, WindowProperties, loadPrcFile, 
 from screeninfo import get_monitors
 from fps_terrain import FpsCamera
 from Player import Player
+from House import House
 # from Terrain import Terrain
 from Zombie import Zombie
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode, CollisionRay, CollisionHandlerQueue
@@ -34,20 +35,14 @@ class Game(ShowBase):
         base.render.set_light(ambient_np)
 
         # house
-        env = loader.loadModel('../side track/console_game/blender_files/house_no_doors_metallic.glb')
-        env.reparentTo(render)
-        env.setScale(3)
-        env_shape = BulletPlaneShape(Vec3(0,0,1),0)
-        node = BulletRigidBodyNode('env')
-        node.addShape(env_shape)
-        np = render.attachNewNode(node)
-        np.setPos(0,0,0)
-        env.setCollideMask(0x1)
+        house_file = '../side track/console_game/blender_files/house_no_doors_metallic.glb'
+        house_scale = 3
+        house = House(house_file, house_scale)
         
         # bullet world for physics
         self.world = BulletWorld()
         self.world.setGravity(Vec3(0, 0, -9.81))
-        self.world.attach(node)
+        self.world.attach(house.get_bullet_node()) # also do this for player node
         
         self.taskMgr.add(self.update, 'update')
         
