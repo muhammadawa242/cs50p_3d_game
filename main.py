@@ -18,8 +18,6 @@ import sys
 sys.path.insert(1, 'Panda_3d_Procedural_Terrain_Engine/src')
 from config import *
 from Panda_3d_Procedural_Terrain_Engine.src.sky import Sky
-# from Panda_3d_Procedural_Terrain_Engine.src.creature import Player,Ai
-from Panda_3d_Procedural_Terrain_Engine.src.physics import TerrainPhysics
 from Panda_3d_Procedural_Terrain_Engine.src.basicfunctions import getMouseLook
 
 loadPrcFile('config.prc')   # see gloabal config variables page, also ConfigVariableManager.getGlobalPtr().listVariables()
