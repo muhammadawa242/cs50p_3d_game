@@ -1,25 +1,16 @@
-"""This class is a modification of followCamera which also inherits from TerrainCamera"""
-
-from Panda_3d_Procedural_Terrain_Engine.src.camera import *
-
-
-class FpsCamera(TerrainCamera):
-    
-    def __init__(self, player, terrain):
-        TerrainCamera.__init__(self)
-
-        self.terrain = terrain
+class FpsCamera():
+    def __init__(self, player):
         self.player = player
         
         # make camera a child of player node
-        self.camNode.reparentTo(player)
+        base.cam.reparentTo(player)
         
         # otherwise the camera and model are opposite to each other
         # Also this means pitch is now inverted. -x is now x
-        self.camNode.setHpr(self.player, 180,3,5)
+        base.cam.setHpr(self.player, 180,3,5)
         
         # set the camera at player's head position level
-        self.camNode.setPos(0.01,0.15,1.59)
+        base.cam.setPos(0.01,0.15,1.59)
         
         self.maxPitch = 50
         self.minPitch = -50

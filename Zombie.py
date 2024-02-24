@@ -13,13 +13,12 @@ class Zombie(DirectObject.DirectObject):
         self.zombie.setScale(0.08)
         self.zombie.loop(flinch)
         self.zombie.reparentTo(game.render)
-        self.zombie.setPos(x_pos*90,50,0)
+        self.zombie.setPos(x_pos*90,50,1.05)
         self.walking = False
         self.die = False
         self.once = True
         self.displace = .2
         self.game.taskMgr.add(self.zombie_walk, 'zombie_walk')
-        self.game.taskMgr.add(self.set_zombie_height,'set_zombie_height')
         
         # print(self.zombie.getAnimNames())
         
@@ -54,8 +53,4 @@ class Zombie(DirectObject.DirectObject):
                 self.zombie.play('dieheadshot2')
                 self.once = False
             
-        return task.cont
-    
-    def set_zombie_height(self, task):
-        self.zombie.setZ(self.game.terrain.getElevation(self.zombie.getX(),self.zombie.getY()))
         return task.cont

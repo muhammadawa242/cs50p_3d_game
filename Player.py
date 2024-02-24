@@ -13,7 +13,6 @@ class Player(DirectObject.DirectObject):
         self.gun = Actor('assets/pistol_bang.glb')
         self.gun.setScale(2.25)
         self.game.taskMgr.add(self.gun_stuff,'gun_stuff')
-        self.game.taskMgr.add(self.set_player_height,'set_player_height')
         self.game.taskMgr.add(self.move_player,'move_player')
         
         self.gun.loop('Idle')
@@ -24,8 +23,9 @@ class Player(DirectObject.DirectObject):
         # bullet world settings
         shape = BulletCapsuleShape(radius=1, height=3.6) # 2.25 + 1.59(cam height) + {cam own length} = total height
         self.node = BulletCharacterControllerNode(shape, 1, 'capsule_player')
+        self.node.setGravity(100)
         self.np = render.attachNewNode(self.node)
-        self.np.setPos(0,0,200)
+        self.np.setPos(0,0,0)
         self.gun.reparentTo(self.np)
         self.game.world.attach(self.node)
         self.is_on_ground = False
@@ -67,6 +67,7 @@ class Player(DirectObject.DirectObject):
 
     def move_player(self, task):
         speed_sens = 3
+        sprint_factor = 3
         w = KeyboardButton.ascii_key('w')
         s = KeyboardButton.ascii_key('s')
         a = KeyboardButton.ascii_key('a')
@@ -77,32 +78,21 @@ class Player(DirectObject.DirectObject):
         speed = Vec3(0, 0, 0)
         
         # liner movement (opposite directions: cause camera is 180 to gun remember)
+        if base.mouseWatcherNode.isButtonDown("shift"): speed_sens *= sprint_factor
         if is_down(w): speed.setY(-speed_sens)
         if is_down(s): speed.setY( speed_sens)
         if is_down(a): speed.setX( speed_sens)
         if is_down(d): speed.setX(-speed_sens)
         
         # jumping
-        if base.mouseWatcherNode.isButtonDown("space") and self.is_on_ground:
-            speed.setZ(speed_sens*20)
-            self.is_on_ground = False
-        elif not self.is_on_ground:
-            # bring player down
-            speed.setZ(-speed_sens*10)
+        if base.mouseWatcherNode.isButtonDown("space"):
+            self.node.setMaxJumpHeight(8.0)
+            self.node.setJumpSpeed(30.0)
+            self.node.doJump()
             
 
         self.node.setLinearMovement(speed, True)
         # angular movement
         # implemented in fps_terrain. coupling caution!
         
-        return task.cont
-
-        
-    
-    def set_player_height(self, task):
-        xy_pos = self.game.terrain.getElevation(self.np.getX(),self.np.getY())
-        
-        if self.np.getZ() <= xy_pos:
-            self.np.setZ(xy_pos)
-            self.is_on_ground = True
         return task.cont
