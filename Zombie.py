@@ -10,7 +10,7 @@ class Zombie(DirectObject.DirectObject):
     def __init__(self, game, x_pos, flinch):
         self.game = game
         self.zombie = Actor('assets/zombie2.glb')
-        self.zombie.setScale(0.05)
+        self.zombie.setScale(0.08)
         self.zombie.loop(flinch)
         self.zombie.reparentTo(game.render)
         self.zombie.setPos(x_pos*90,50,0)
