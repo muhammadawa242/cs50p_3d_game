@@ -42,7 +42,8 @@ class Game(ShowBase):
         # ambient_np = base.render.attach_new_node(ambient)
         # base.render.set_light(ambient_np)
 
-        house = House()
+        House()
+        terrain = Terrain(5, [(1,1,1,1),(0,0,0,0)])
         
         # load player
         self.player_actor = Actor('assets/KayKit_Adventurers_1.0_FREE/KayKit_Adventurers_1.0_FREE/Characters/gltf/Barbarian.glb')
@@ -55,13 +56,12 @@ class Game(ShowBase):
         # bullet world for physics
         self.world = BulletWorld()
         self.world.setGravity(Vec3(0, 0, -9.81))
-        self.world.attach(house.get_bullet_node())
+        self.world.attach(terrain.get_bullet_node())
         self.world.attach(self.player.get_bullet_node())
         
         self.taskMgr.add(self.update, 'update') # bullet update
         self.taskMgr.add(self.move, "moveTask") # player movement
                 
-        Terrain(5, [(1,1,1,1),(0,0,0,0)])
         
     
     def move(self, task):

@@ -1,6 +1,7 @@
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase import DirectObject
-from panda3d.core import CardMaker
+from panda3d.core import CardMaker, Vec3
+from panda3d.bullet import BulletRigidBodyNode, BulletPlaneShape
 
 
 class Terrain(DirectObject.DirectObject):
@@ -9,6 +10,13 @@ class Terrain(DirectObject.DirectObject):
         self.color_list = color_list
         self.cardmaker = CardMaker('quad')
         self.floor_generate(tiles_quant)
+        
+        # add bullet plain so players can stand here
+        self.env_shape = BulletPlaneShape(Vec3(0,0,1),0)
+        self.node = BulletRigidBodyNode('env')
+        self.node.addShape(self.env_shape)
+        self.np = render.attach_new_node(self.node)
+        self.np.setPos(0,0,0)
     
     def quad(self, floor, frame, color, hpr):
         self.cardmaker.set_frame(frame)
@@ -31,3 +39,5 @@ class Terrain(DirectObject.DirectObject):
                 frame = (x*size,x*size+size,y*size,y*size+size)
                 self.quad(self.floor, frame, color, (0,-90,0))
 
+    def get_bullet_node(self):
+        return self.node
