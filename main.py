@@ -5,7 +5,7 @@ from panda3d.core import Point3, KeyboardButton, WindowProperties, loadPrcFile, 
 from screeninfo import get_monitors
 from fps_terrain import FpsCamera
 from Player import Player
-from House import House
+from CraftSystem import CraftSystem
 from Terrain import Terrain
 from Zombie import Zombie
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode, CollisionRay, CollisionHandlerQueue
@@ -42,7 +42,7 @@ class Game(ShowBase):
         # ambient_np = base.render.attach_new_node(ambient)
         # base.render.set_light(ambient_np)
 
-        House()
+        CraftSystem()
         terrain = Terrain(5, [(1,1,1,1),(0,0,0,0)])
         
         # load player

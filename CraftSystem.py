@@ -3,7 +3,7 @@ from panda3d.core import Point3, Vec3, KeyboardButton
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode, CollisionHandlerQueue, CollisionBox
 from Item import Item
 
-class House(DirectObject.DirectObject):
+class CraftSystem(DirectObject.DirectObject):
     def __init__(self):
         # loads all the material from a pack and lines em up
         file = 'dungeon_stuff'

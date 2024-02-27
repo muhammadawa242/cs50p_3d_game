@@ -4,6 +4,7 @@
 window-title awais cool game
 
 show-frame-rate-meter #t
+cursor-hidden true
 #show-occlusion
 #show-tex-mem
 
