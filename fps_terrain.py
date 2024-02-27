@@ -10,7 +10,7 @@ class FpsCamera():
         base.cam.setHpr(self.player, 180,3,5)
         
         # set the camera at player's head position level
-        base.cam.setPos(0.01,0.15,1.59)
+        base.cam.setPos(0.01,-.5,1.59)
         
         self.maxPitch = 50
         self.minPitch = -50

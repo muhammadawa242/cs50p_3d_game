@@ -6,21 +6,28 @@ from panda3d.core import Point3, KeyboardButton, WindowProperties, loadPrcFile, 
 import math
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode
 
+# this class might need full restructuring
 class Zombie(DirectObject.DirectObject):
-    def __init__(self, game, x_pos, flinch):
+    def __init__(self, game, x_pos, flinch, textNodePath):
+        self.textNodePath = textNodePath
         self.game = game
-        self.zombie = Actor('assets/zombie2.glb')
-        self.zombie.setScale(0.08)
-        self.zombie.loop(flinch)
+        # self.zombie = Actor('assets/zombie2.glb')
+        self.zombie = Actor('assets/KayKit_Adventurers_1.0_FREE/KayKit_Adventurers_1.0_FREE/Characters/gltf/Rogue.glb')
+        self.zombie.setScale(2)
+        # self.zombie.loop(flinch)
         self.zombie.reparentTo(game.render)
-        self.zombie.setPos(x_pos*90,50,1.05)
+        self.zombie.setPos(x_pos*9,50,1.05)
         self.walking = False
         self.die = False
         self.once = True
-        self.displace = .2
+        self.displace = 0
         self.game.taskMgr.add(self.zombie_walk, 'zombie_walk')
         
         # print(self.zombie.getAnimNames())
+        # testing animations
+        self.anim_list = self.zombie.getAnimNames()
+        self.anim = 0
+        self.anim_over = True
         
     def get_zombie(self):
         return self.zombie
@@ -52,5 +59,14 @@ class Zombie(DirectObject.DirectObject):
             if self.once:
                 self.zombie.play('dieheadshot2')
                 self.once = False
+        
+        # testing animations
+        if base.mouseWatcherNode.isButtonDown(KeyboardButton.ascii_key('c')) and self.anim_over:
+            self.zombie.loop(self.anim_list[self.anim%76])
+            self.textNodePath.setText(self.anim_list[self.anim%76])
+            self.anim += 1
+            self.anim_over = False
+        if base.mouseWatcherNode.isButtonDown(KeyboardButton.ascii_key('v')):
+            self.anim_over = True
             
         return task.cont
