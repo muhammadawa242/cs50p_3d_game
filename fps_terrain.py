@@ -7,7 +7,7 @@ class FpsCamera():
         
         # otherwise the camera and model are opposite to each other
         # Also this means pitch is now inverted. -x is now x
-        base.cam.setHpr(self.player, 180,3,5)
+        base.cam.setHpr(self.player, 180,0,0)
         
         # set the camera at player's head position level
         base.cam.setPos(0.01,-.5,1.59)
