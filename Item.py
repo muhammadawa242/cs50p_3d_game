@@ -1,25 +1,97 @@
 from direct.showbase import DirectObject
-from panda3d.core import Point3, Vec3, KeyboardButton
+from panda3d.core import Point3, Vec3, KeyboardButton, LVecBase3f
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode, CollisionHandlerQueue, CollisionBox
 
 
 class Item(DirectObject.DirectObject):
     def __init__(self, name, item_path, item_scale):
+        # model
         self.item = loader.loadModel(item_path)
         self.item.setScale(item_scale)
         self.item.reparentTo(render)
         
+        bound0, bound1 = self.item.getTightBounds()[0], self.item.getTightBounds()[1]
+        dimensions = bound1 - bound0
+        x, y, z = dimensions[0], dimensions[1], dimensions[2]
+        self.item.showTightBounds()
+        
+        # (x,y,z) point of each face positions from mid to respective face for all 6
+        self.faces_positions = {
+            'front' : [y/2, LVecBase3f(0, -1, 0)],
+            'top' : [z, LVecBase3f(0, 0, 1)],
+            'left' : [x/2, LVecBase3f(1, 0, 0)],
+            'right' : [x/2, LVecBase3f(-1, 0, 0)],
+            'bottom' : [0, LVecBase3f(0, 0, -1)],
+            'back' : [y/2, LVecBase3f(0, 1, 0)]
+        }
+        
         # put collider round the item
-        self.item_shape = CollisionBox(self.item.getTightBounds()[0], self.item.getTightBounds()[1])
+        self.item_shape = CollisionBox(bound0, bound1)
         self.item_node = CollisionNode(name)
         self.item_node.addSolid(self.item_shape)
-        self.np = render.attach_new_node(self.item_node)
-        self.np.show()
+        self.np = self.item.attach_new_node(self.item_node)
+        
         
     def set_obj_pos(self, x, y, z):
-        """set the item's position along with collider cause collider not a child of item"""
         self.item.setPos(x, y, z)
-        self.np.setPos(x, y, z)
         
-    def __add__(self,other):
-        ...
+    
+    def set_rotation(self, hpr):
+        """This function sets +90 deg rotation along one axis at a time.
+        if multiple rotations along different axes are required call it accordingly."""
+        
+        if hpr != 0 or hpr != 1 or hpr != 2:
+            print('Wrong input!')
+            return
+        
+        four_seq = [
+            ['left', 'back', 'right', 'front'],
+            ['top', 'front', 'bottom', 'back'],
+            ['top', 'right', 'bottom', 'left']
+        ]
+        
+        # (h,p,r) represented by (0,1,2)
+        self.replace_faces(four_seq[hpr])
+        
+        if hpr == 0: self.item.setH(self.item.getH()+90)
+        if hpr == 1: self.item.setP(self.item.getP()+90)
+        if hpr == 2: self.item.setR(self.item.getR()+90)
+        
+        
+    def replace_faces(self, keys_list):
+        """This function changes the placement of the dictinoary's values
+        based on order of provided keys_list elements in circular manner"""
+        
+        if len(keys_list) != 4:
+            print('Error replacing faces!')
+            return
+        
+        tmp = self.faces_positions[keys_list[0]][1]
+        last_indx = len(keys_list)-1
+        
+        for i in range(last_indx):
+            self.faces_positions[keys_list[i]][1] = self.faces_positions[keys_list[i+1]][1]
+            
+        self.faces_positions[keys_list[last_indx]][1] = tmp
+        
+    
+    def get_face_pos(self, face):
+        # panda has no float*vector operator so order is vector*float
+        return self.faces_positions[face][1]*self.faces_positions[face][0]
+    
+    def attach(first_item, second_item, first_face, second_face, turn):
+        """use dice based numbering for face index number when calling this function
+        instead of array based numbering"""
+        
+        # second_item.set_rotation(1)
+        # second_item.set_rotation(1)
+        # second_item.set_rotation(1)
+        
+        first_pos = first_item.item.getPos() + first_item.get_face_pos(first_face)
+        second_spacing = second_item.get_face_pos(second_face) # second item needs to start at the face not its middle point
+        
+        # second_item.item.detachNode()
+        
+        # second_item.item.reparent_to(first_item.item)
+        # second_item.item.set_scale(first_item.item, 1)
+        second_item.item.set_pos(first_pos-second_spacing) #-second_spacing for -z, +ve otherwise. same for other axes??
