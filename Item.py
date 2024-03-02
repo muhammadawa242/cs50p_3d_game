@@ -1,7 +1,8 @@
 from direct.showbase import DirectObject
 from panda3d.core import Point3, Vec3, KeyboardButton, LVecBase3f
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode, CollisionHandlerQueue, CollisionBox
-
+import copy
+from rotation_rules import _rotation_rules
 
 class Item(DirectObject.DirectObject):
     def __init__(self, name, item_path, item_scale):
@@ -25,6 +26,8 @@ class Item(DirectObject.DirectObject):
             'back' : [y/2, LVecBase3f(0, 1, 0)]
         }
         
+        self.faces_copy = copy.deepcopy(self.faces_positions)
+        
         # put collider round the item
         self.item_shape = CollisionBox(bound0, bound1)
         self.item_node = CollisionNode(name)
@@ -40,7 +43,7 @@ class Item(DirectObject.DirectObject):
         """This function sets +90 deg rotation along one axis at a time.
         if multiple rotations along different axes are required call it accordingly."""
         
-        if hpr != 0 or hpr != 1 or hpr != 2:
+        if hpr != 0 and hpr != 1 and hpr != 2:
             print('Wrong input!')
             return
         
@@ -56,6 +59,10 @@ class Item(DirectObject.DirectObject):
         if hpr == 0: self.item.setH(self.item.getH()+90)
         if hpr == 1: self.item.setP(self.item.getP()+90)
         if hpr == 2: self.item.setR(self.item.getR()+90)
+    
+    def reset_rotations(self):
+        self.faces_positions = copy.deepcopy(self.faces_copy)
+        self.item.setHpr(0,0,0)
         
         
     def replace_faces(self, keys_list):
@@ -83,9 +90,8 @@ class Item(DirectObject.DirectObject):
         """use dice based numbering for face index number when calling this function
         instead of array based numbering"""
         
-        # second_item.set_rotation(1)
-        # second_item.set_rotation(1)
-        # second_item.set_rotation(1)
+        for i in _rotation_rules[first_face][second_face]:
+            second_item.set_rotation(i)
         
         first_pos = first_item.item.getPos() + first_item.get_face_pos(first_face)
         second_spacing = second_item.get_face_pos(second_face) # second item needs to start at the face not its middle point
