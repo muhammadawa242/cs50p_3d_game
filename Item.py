@@ -1,5 +1,5 @@
 from direct.showbase import DirectObject
-from panda3d.core import Point3, Vec3, KeyboardButton, LVecBase3f
+from panda3d.core import Point3, Vec3, KeyboardButton, LVecBase3f, BitMask32
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionSphere, CollisionNode, CollisionHandlerQueue, CollisionBox
 import copy
 from rotation_rules import _rotation_rules
@@ -33,6 +33,10 @@ class Item(DirectObject.DirectObject):
         self.item_node = CollisionNode(name)
         self.item_node.addSolid(self.item_shape)
         self.np = self.item.attach_new_node(self.item_node)
+        
+        # set coliision mask
+        item_mask = BitMask32(1)
+        self.item_node.setIntoCollideMask(item_mask)
         
         
     def set_obj_pos(self, x, y, z):

@@ -42,7 +42,7 @@ _rotation_rules = {
         'front': [0],
         'top': [],
         'left': 3*[2],
-        'right': [2],
+        'right': 3*[2],
         'bottom': 2*[2],
         'back': [1]
     },
