@@ -5,7 +5,7 @@ import copy
 from rotation_rules import _rotation_rules
 
 class Item(DirectObject.DirectObject):
-    def __init__(self, name, item_path, item_scale):
+    def __init__(self, name, item_path, item_scale, ctrav, ray_queue, p):
         # model
         self.item = loader.loadModel(item_path)
         self.item.setScale(item_scale)
@@ -36,7 +36,12 @@ class Item(DirectObject.DirectObject):
         
         # set coliision mask
         item_mask = BitMask32(1)
-        self.item_node.setIntoCollideMask(item_mask)
+        self.item_node.setFromCollideMask(item_mask)
+        self.item_node.setIntoCollideMask(0x10)
+        
+        # ctrav
+        p.addCollider(self.np, self.item)
+        ctrav.addCollider(self.np, p)
         
         
     def set_obj_pos(self, x, y, z):

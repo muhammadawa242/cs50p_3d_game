@@ -14,11 +14,13 @@ class CraftSystem(DirectObject.DirectObject):
         self.ray_queue = CollisionHandlerQueue()
         
         self.ray = CollisionSegment()
+        p = CollisionHandlerPusher()
         # self.ray.setFromLens(base.camNode,10)
         ray_node = CollisionNode("ray")
         ray_node.add_solid(self.ray)
         ray_mask = BitMask32(1)
         ray_node.setFromCollideMask(ray_mask)
+        ray_node.setIntoCollideMask(0x10)
         # self.ray_np = base.cam.attach_new_node(ray_node)
         self.ray_np = render.attach_new_node(ray_node)
         ctrav = CollisionTraverser()
@@ -38,7 +40,7 @@ class CraftSystem(DirectObject.DirectObject):
                 if file == 'medieval_stuff':
                     self.env = Item(i, 'assets/kenney_retro-medieval-kit/Models/GLTF format/'+i, 3)
                 else:
-                    self.env = Item(i, 'assets/KayKit_DungeonRemastered_1.0_FREE/KayKit_DungeonRemastered_1.0_FREE/Assets/gltf/'+i, 3)
+                    self.env = Item(i, 'assets/KayKit_DungeonRemastered_1.0_FREE/KayKit_DungeonRemastered_1.0_FREE/Assets/gltf/'+i, 3, ctrav, self.ray_queue, p)
                 
                 self.env.set_obj_pos(3,3 + y,0)
                 y += 30
@@ -54,6 +56,7 @@ class CraftSystem(DirectObject.DirectObject):
     def rotate(self, key, func, flag_indx, task):
         self.ray.setFromLens(base.camNode,0, 10)
         if self.ray_queue.getNumEntries() > 0:
+            print('asasas')
             self.ray_queue.sortEntries()
             rayHit = self.ray_queue.getEntry(0)
             print(rayHit)
