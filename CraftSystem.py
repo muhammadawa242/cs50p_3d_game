@@ -19,9 +19,10 @@ class CraftSystem(DirectObject.DirectObject):
         ray_node.add_solid(self.ray)
         ray_mask = BitMask32(1)
         ray_node.setFromCollideMask(ray_mask)
-        self.ray_np = base.cam.attach_new_node(ray_node)
-        
-        # base.cTrav.addCollider(self.ray_np, ray_queue)
+        # self.ray_np = base.cam.attach_new_node(ray_node)
+        self.ray_np = render.attach_new_node(ray_node)
+        ctrav = CollisionTraverser()
+        ctrav.addCollider(self.ray_np, self.ray_queue)
         self.ray_np.show()
         
         with open(file + '.txt', 'r') as f:
@@ -51,7 +52,7 @@ class CraftSystem(DirectObject.DirectObject):
         taskMgr.add(self.rotate, extraArgs=['arrow_right', CraftSystem.roll, 2], appendTask=True)
     
     def rotate(self, key, func, flag_indx, task):
-        self.ray.setFromLens(base.camNode,0, 0)
+        self.ray.setFromLens(base.camNode,0, 10)
         if self.ray_queue.getNumEntries() > 0:
             self.ray_queue.sortEntries()
             rayHit = self.ray_queue.getEntry(0)
