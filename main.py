@@ -31,10 +31,10 @@ class Game(ShowBase):
         self.win.requestProperties(properties)
                         
         # set 2d text on screen temporarily - can be converted to HUD
-        # text = TextNode('node name')
-        # text.setText("Every day in every way I'm getting better and better.")
-        # textNodePath = base.aspect2d.attach_new_node(text)
-        # textNodePath.setScale(0.07)
+        text = TextNode('node name')
+        text.setText("Every day in every way I'm getting better and better.")
+        textNodePath = base.aspect2d.attach_new_node(text)
+        textNodePath.setScale(0.07)
         
         # set lightning to avoid reflection from walls
         # ambient = AmbientLight("ambient")
@@ -42,7 +42,7 @@ class Game(ShowBase):
         # ambient_np = base.render.attach_new_node(ambient)
         # base.render.set_light(ambient_np)
 
-        CraftSystem()
+        CraftSystem(text)
         terrain = Terrain(5, [(1,1,1,1),(0,0,0,0)])
         
         # load player
