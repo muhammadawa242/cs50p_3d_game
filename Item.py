@@ -14,7 +14,6 @@ class Item(DirectObject.DirectObject):
         bound0, bound1 = self.item.getTightBounds()[0], self.item.getTightBounds()[1]
         dimensions = bound1 - bound0
         x, y, z = dimensions[0], dimensions[1], dimensions[2]
-        # self.item.showTightBounds()
         
         # (x,y,z) point of each face positions from mid to respective face for all 6
         self.faces_positions = {
@@ -26,6 +25,7 @@ class Item(DirectObject.DirectObject):
             'back' : [y/2, LVecBase3f(0, 1, 0)]
         }
         
+        # will later be used to reset original faces
         self.faces_copy = copy.deepcopy(self.faces_positions)
         
         # put collider round the item
@@ -35,7 +35,7 @@ class Item(DirectObject.DirectObject):
         self.np = self.item.attach_new_node(self.item_node)
         self.np.show()
         
-        # set coliision mask
+        # set into colision mask
         self.np.setCollideMask(0x10)
         
         
@@ -90,18 +90,13 @@ class Item(DirectObject.DirectObject):
         # panda has no float*vector operator so order is vector*float
         return self.faces_positions[face][1]*self.faces_positions[face][0]
     
-    def attach(first_item, second_item, first_face, second_face, turn):
-        """use dice based numbering for face index number when calling this function
-        instead of array based numbering"""
+    def attach(first_item, second_item, first_face, second_face):
+        """Attaches 2 Item objects together. The second one will be
+        placed after the first one joining the desired faces for both objects"""
         
         for i in _rotation_rules[first_face][second_face]:
             second_item.set_rotation(i)
         
         first_pos = first_item.item.getPos() + first_item.get_face_pos(first_face)
         second_spacing = second_item.get_face_pos(second_face) # second item needs to start at the face not its middle point
-        
-        # second_item.item.detachNode()
-        
-        # second_item.item.reparent_to(first_item.item)
-        # second_item.item.set_scale(first_item.item, 1)
-        second_item.item.set_pos(first_pos-second_spacing) #-second_spacing for -z, +ve otherwise. same for other axes??
+        second_item.item.set_pos(first_pos-second_spacing)
