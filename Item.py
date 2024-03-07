@@ -33,7 +33,7 @@ class Item(DirectObject.DirectObject):
         self.item_node = CollisionNode(name)
         self.item_node.addSolid(self.item_shape)
         self.np = self.item.attach_new_node(self.item_node)
-        self.np.show()
+        # self.np.show()
         
         # set into colision mask
         self.np.setCollideMask(0x10)

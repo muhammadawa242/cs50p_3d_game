@@ -5,8 +5,9 @@ from Item import Item
 from common_functions import press_once
 
 class CraftSystem(DirectObject.DirectObject):
-    def __init__(self,text):
+    def __init__(self,text,gui):
         self.text = text
+        self.gui = gui
         # loads all the material from a pack and lines em up
         file = 'dungeon_stuff'
         # file = 'medieval_stuff'
@@ -49,26 +50,40 @@ class CraftSystem(DirectObject.DirectObject):
                 self.l.append(self.env)
 
         # tasks are meant to be added the following way to allow single press key functionality
-        taskMgr.add(self.rotate, extraArgs=['arrow_up', CraftSystem.yaw, 0], appendTask=True)
-        taskMgr.add(self.rotate, extraArgs=['arrow_down', CraftSystem.pitch, 1], appendTask=True)
-        taskMgr.add(self.rotate, extraArgs=['arrow_right', CraftSystem.roll, 2], appendTask=True)
-        taskMgr.add(self.attach_faces, extraArgs=[MouseButton.button(0), self.list_fill, 3], appendTask=True)
+        taskMgr.add(self.press_to_rotate, extraArgs=['arrow_up', CraftSystem.yaw, 0], appendTask=True)
+        taskMgr.add(self.press_to_rotate, extraArgs=['arrow_down', CraftSystem.pitch, 1], appendTask=True)
+        taskMgr.add(self.press_to_rotate, extraArgs=['arrow_right', CraftSystem.roll, 2], appendTask=True)
+        taskMgr.add(self.click_to_add, extraArgs=[MouseButton.button(0), self.list_fill, 3], appendTask=True)
+        
+        taskMgr.add(self.attach_faces, 'attach_faces')
 
     
-    def rotate(self, key, func, flag_indx, task):
+    def press_to_rotate(self, key, func, flag_indx, task):
         press_once(key, func, flag_indx, self.l, reset=False)
         return task.cont
     
-    def attach_faces(self, key, func, flag_indx, task):
+    def click_to_add(self, key, func, flag_indx, task):
         press_once(key, func, flag_indx, self.l, reset=True)
+        return task.cont
+
+    def attach_faces(self, task):
+        """provided the first and second face, join both of them """
+        if self.gui.first_face != '' and self.gui.second_face != '':
+            Item.attach(self.l[self.items[0]-1], self.l[self.items[1]-1], self.gui.first_face,self.gui.second_face)
+            self.gui.hide_cursor_again()
+            self.gui.box.hide()
+            self.items = []
+            self.gui.first_face = ''
+            self.gui.second_face = ''
         return task.cont
 
 
     # Following functions get called only 'once' when respective key is pressed
+    # by being called in the press_once function
     
     def list_fill(self,_):
-        """when clicked, adds items to a list and attaches the list's 2 elements together
-        on desired faces"""
+        """when clicked, adds items to a list"""
+        
         self.ray.setFromLens(base.camNode,0,0)
         self.ctrav.traverse(render)
         
@@ -88,8 +103,9 @@ class CraftSystem(DirectObject.DirectObject):
                     del self.items[1]
                     return
                 
-                Item.attach(self.l[self.items[0]-1], self.l[self.items[1]-1], 'left','right')
-                self.items = []
+                # show the dialogue box once 2 items are selected
+                self.gui.box.show()
+                self.gui.show_cursor()
         
         # self.text.setText(str(self.items))
     

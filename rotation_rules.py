@@ -17,8 +17,8 @@ _rotation_rules = {
     'top': {
         'front': [1],
         'top': 2*[2],
-        'left': [2],
-        'right': 3*[2],
+        'left': 3*[2],
+        'right': [2],
         'bottom': [],
         'back': 3*[1]
     },
