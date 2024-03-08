@@ -50,13 +50,45 @@ class CraftSystem(DirectObject.DirectObject):
                 self.l.append(self.env)
 
         # tasks are meant to be added the following way to allow single press key functionality
-        taskMgr.add(self.press_to_rotate, extraArgs=['arrow_up', CraftSystem.yaw, 0], appendTask=True)
-        taskMgr.add(self.press_to_rotate, extraArgs=['arrow_down', CraftSystem.pitch, 1], appendTask=True)
-        taskMgr.add(self.press_to_rotate, extraArgs=['arrow_right', CraftSystem.roll, 2], appendTask=True)
+        taskMgr.add(self.press_to_rotate, extraArgs=['z', self.yaw, 0], appendTask=True)
+        taskMgr.add(self.press_to_rotate, extraArgs=['x', self.pitch, 1], appendTask=True)
+        taskMgr.add(self.press_to_rotate, extraArgs=['c', self.roll, 2], appendTask=True)
         taskMgr.add(self.click_to_add, extraArgs=[MouseButton.button(0), self.list_fill, 3], appendTask=True)
         
         taskMgr.add(self.attach_faces, 'attach_faces')
+        taskMgr.add(self.move_along_axis, 'move_along_axis')
 
+    
+    def move_along_axis(self, task):
+        """It will let you select one item, move it and deselect it when done."""
+        
+        if len(self.items)==1:
+            displacement = .1
+            self.l[self.items[0]-1].np.show()
+            # along x axis
+            if base.mouseWatcherNode.isButtonDown('arrow_right'):
+                self.l[self.items[0]-1].item.setX(self.l[self.items[0]-1].item.getX()+displacement)
+            if base.mouseWatcherNode.isButtonDown('arrow_left'):
+                self.l[self.items[0]-1].item.setX(self.l[self.items[0]-1].item.getX()-displacement)
+            
+            # along y axis
+            if base.mouseWatcherNode.isButtonDown('arrow_up'):
+                self.l[self.items[0]-1].item.setY(self.l[self.items[0]-1].item.getY()+displacement)
+            if base.mouseWatcherNode.isButtonDown('arrow_down'):
+                self.l[self.items[0]-1].item.setY(self.l[self.items[0]-1].item.getY()-displacement)
+            
+            # along z axis
+            if base.mouseWatcherNode.isButtonDown('page_up'):
+                self.l[self.items[0]-1].item.setZ(self.l[self.items[0]-1].item.getZ()+displacement)
+            if base.mouseWatcherNode.isButtonDown('page_down'):
+                self.l[self.items[0]-1].item.setZ(self.l[self.items[0]-1].item.getZ()-displacement)
+        
+        # deselect the item when escape button pressed
+        if base.mouseWatcherNode.isButtonDown('escape') and len(self.items)!=0:
+            self.l[self.items[0]-1].np.hide()
+            self.hide_shit()
+            
+        return task.cont
     
     def press_to_rotate(self, key, func, flag_indx, task):
         press_once(key, func, flag_indx, self.l, reset=False)
@@ -70,14 +102,18 @@ class CraftSystem(DirectObject.DirectObject):
         """provided the first and second face, join both of them """
         if self.gui.first_face != '' and self.gui.second_face != '':
             Item.attach(self.l[self.items[0]-1], self.l[self.items[1]-1], self.gui.first_face,self.gui.second_face)
-            self.gui.hide_cursor_again()
-            self.gui.box.hide()
-            self.items = []
-            self.gui.first_face = ''
-            self.gui.second_face = ''
+            self.hide_shit()
+            
         return task.cont
 
-
+    def hide_shit(self):
+        self.gui.show_cursor()  # have to call it otherwise calling hide on next line would mean hiding mouse that is already hidden
+        self.gui.hide_cursor_again()
+        self.gui.box.hide()
+        self.items = []
+        self.gui.first_face = ''
+        self.gui.second_face = ''
+        
     # Following functions get called only 'once' when respective key is pressed
     # by being called in the press_once function
     
@@ -104,14 +140,18 @@ class CraftSystem(DirectObject.DirectObject):
                     return
                 
                 # show the dialogue box once 2 items are selected
+                self.l[self.items[0]-1].np.hide()
                 self.gui.box.show()
                 self.gui.show_cursor()
         
         # self.text.setText(str(self.items))
     
-    def yaw(l):
-        l[1].set_rotation(0)
-    def pitch(l):
-        l[1].set_rotation(1)
-    def roll(l):
-        l[1].set_rotation(2)
+    def yaw(self,_):
+        if len(self.items)==1:
+            self.l[self.items[0]-1].set_rotation(0)
+    def pitch(self,_):
+        if len(self.items)==1:
+            self.l[self.items[0]-1].set_rotation(1)
+    def roll(self,_):
+        if len(self.items)==1:
+            self.l[self.items[0]-1].set_rotation(2)
