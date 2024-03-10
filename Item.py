@@ -8,8 +8,9 @@ class Item(DirectObject.DirectObject):
     def __init__(self, name, item_path, item_scale):
         # model
         self.item = loader.loadModel(item_path)
+        self.name = name
         self.item.setScale(item_scale)
-        self.item.reparentTo(render)
+        # self.item.reparentTo(render)
         
         bound0, bound1 = self.item.getTightBounds()[0], self.item.getTightBounds()[1]
         dimensions = bound1 - bound0
@@ -36,8 +37,18 @@ class Item(DirectObject.DirectObject):
         # self.np.show()
         
         # set into colision mask
+        # self.np.node().setFromCollideMask(0x10)
         self.np.setCollideMask(0x10)
+        # p.addCollider(self.np, self.item)
+        # ctrav.addCollider(self.np, p)
         
+        taskMgr.add(self.adjust_pos, 'adjust_pos')
+        
+    def adjust_pos(self, task):
+        if self.item.getZ() < 0:
+            self.item.setZ(0)
+            
+        return task.cont
         
     def set_obj_pos(self, x, y, z):
         self.item.setPos(x, y, z)

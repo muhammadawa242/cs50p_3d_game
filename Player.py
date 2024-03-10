@@ -18,7 +18,7 @@ class Player(DirectObject.DirectObject):
         self.node = BulletCharacterControllerNode(shape, 1, 'capsule_player')
         self.node.setGravity(100)
         self.np = render.attach_new_node(self.node)
-        self.np.setPos(0,0,0)
+        self.np.setPos(100,100,0)
         self.player.reparentTo(self.np)
         self.is_on_ground = False
         

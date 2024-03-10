@@ -5,9 +5,11 @@ from Item import Item
 from common_functions import press_once
 
 class CraftSystem(DirectObject.DirectObject):
-    def __init__(self,text,gui):
+    def __init__(self,text,gui,player):
         self.text = text
         self.gui = gui
+        self.gui.box.hide()
+        self.player = player
         # loads all the material from a pack and lines em up
         file = 'dungeon_stuff'
         # file = 'medieval_stuff'
@@ -82,6 +84,10 @@ class CraftSystem(DirectObject.DirectObject):
                 self.l[self.items[0]-1].item.setZ(self.l[self.items[0]-1].item.getZ()+displacement)
             if base.mouseWatcherNode.isButtonDown('page_down'):
                 self.l[self.items[0]-1].item.setZ(self.l[self.items[0]-1].item.getZ()-displacement)
+            
+            # bring item down to the player
+            if base.mouseWatcherNode.isButtonDown('control') and base.mouseWatcherNode.isButtonDown(MouseButton.button(0)):
+                self.l[self.items[0]-1].item.setPos(self.player, 0, -50, 0)
         
         # deselect the item when escape button pressed
         if base.mouseWatcherNode.isButtonDown('escape') and len(self.items)!=0:
@@ -155,3 +161,54 @@ class CraftSystem(DirectObject.DirectObject):
     def roll(self,_):
         if len(self.items)==1:
             self.l[self.items[0]-1].set_rotation(2)
+            
+        
+            
+class Inventory(DirectObject.DirectObject):
+    def __init__(self, gui, l, player):
+        self.gui = gui
+        self.l = l
+        self.gui.box.hide()
+        self.show_flag = 1
+        self.player = player
+        
+        taskMgr.add(self.show_inventory_task, extraArgs=['i', self.show_inventory, 4], appendTask=True)
+        taskMgr.add(self.add_item, 'add_item')
+        
+    
+    def add_item(self, task):
+        # if some button is selected in inventory
+        if self.gui.item_selected != None:
+            selected_indx = self.gui.item_selected
+            self.hide_shit()
+            # add item to render
+            env = Item(self.l[selected_indx].name+str(len(self.l)), 'assets/KayKit_DungeonRemastered_1.0_FREE/KayKit_DungeonRemastered_1.0_FREE/Assets/gltf/'+self.l[selected_indx].name, 3)
+            
+            self.l.append(env)
+            env.np.setTag(self.l[-1].name,str(len(self.l)))
+            self.l[-1].item.reparentTo(render)
+            self.l[-1].item.setPos(self.player, 0,-50,0)
+            self.l[-1].item.setZ(0)
+            # load item to self.l
+            
+        return task.cont
+    
+    def hide_shit(self):
+        self.gui.box.hide()
+        self.gui.show_cursor()
+        self.gui.hide_cursor_again()
+        self.gui.item_selected = None
+        self.show_flag += 1
+    
+    def show_inventory_task(self, key, func, flag_indx, task):
+        press_once(key, func, flag_indx, self.l, reset=True)
+        return task.cont
+    
+    def show_inventory(self, _):
+        if self.show_flag%2:
+            self.gui.show_cursor()
+            self.gui.box.show()
+        else:
+            self.hide_shit()
+        
+        self.show_flag += 1

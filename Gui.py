@@ -95,3 +95,34 @@ class FaceGui(Gui):
     
     def buttonPressed1(self, text, mousePos):
         self.second_face = text.lower()
+        
+
+class InventoryGui(Gui):
+
+    def __init__(self, properties, movetask, items_list):
+        super(InventoryGui, Gui.__init__(self, properties, movetask))
+        
+        self.item_selected = None
+        individual_size = 0.2
+        canvas_top = (individual_size/2)*len(items_list) + individual_size
+        myframe = DirectScrolledFrame(parent=self.box, canvasSize=(0, 2, -canvas_top, canvas_top), frameSize=(-1, 1, -.7, .7))
+        
+        for i in range(len(items_list)):
+                canvas_top -= individual_size
+                
+                btn = DirectButton(
+                        pos = (0.25, 0, canvas_top),
+                        parent = myframe.getCanvas(),
+                        scale = 0.07,
+                        image='assets/cross.png')
+                
+                label = DirectLabel(
+                        pos = (0.25 + 4*individual_size, 0, canvas_top),
+                        parent = myframe.getCanvas(),
+                        scale = 0.07)
+                
+                label['text'] = items_list[i].name.split('.')[0]
+                btn.bind(DGG.B1CLICK, self.buttonPressed, extraArgs=[i])
+                
+    def buttonPressed(self, btn_indx, mousePos):
+        self.item_selected = btn_indx
