@@ -208,7 +208,7 @@ class Inventory(DirectObject.DirectObject):
         if self.show_flag%2:
             self.gui.show_cursor()
             self.gui.box.show()
+            self.show_flag += 1
         else:
             self.hide_shit()
         
-        self.show_flag += 1
